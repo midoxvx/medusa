@@ -1,2 +1,29 @@
 ---
+
+
+keys_directory: "{{lookup('env', 'HOME')}}/{{ansible_user}}/keys"
+shell_path: /bin/bash
+user_password: this_should_not_be_here_in_clear_text
+
+
+users:
+  - username: midox
+    uid: 1201
+    role: devops
+    shell: "{{shell_path}}"
+    sudoer: true
+  - username: trevor
+    uid: 1202
+    role: devops
+    shell: "{{shell_path}}"
+    sudoer: true
+  - username: milan
+    uid: 2201
+    role: managers
+    shell: "{{shell_path}}"
+    sudoer: false
+  - username: nidhi
+    uid: 2202
+    role: managers
+    sudoer: true
 # vars file for users

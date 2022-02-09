@@ -1,2 +1,64 @@
 ---
+- name: create local keys directory
+  file:
+    state: directory
+    path: "{{keys_directory}}"
+    owner: "{{ansible_user}}"
+    group: "{{ansible_user}}"
+  delegate_to: localhost
+  run_once: true
+
+
+- name: create local users
+  user:
+    name: "{{localuser.username}}"
+    state: present
+    shell: "{{shell}}"
+    generate_ssh_key: true
+    ssh_key_file: "{{keys_directory}}/id_rsa_{{localuser.username}}.pub"
+    password: "{{user_password | password_hash('sha512', 'RHCA')}}"
+    uid: "{{localuser.uid}}"
+  loop: "{{users}}"
+  loop_control:
+    loop_var: localuser
+  delegate_to: localhost
+  run_once: true
+
+
+- name: change permissions on keys directory so lookup works later
+  file:
+    state: directory
+    path: "{{keys_directory}}"
+    recurse: true
+    owner: "{{ansible_user}}"
+    group: "{{ansible_user}}"
+  delegate_to: localhost
+  run_once: true
+
+
+- name: create users on webservers and move ssh_keys
+  block: 
+  - name: Create users
+    user:
+      name: "{{web_user.username}}"
+      password: "{{user_password | password_hash('sha512', 'RHCA')}}"
+      state: present
+      uid: "{{web_user.uid}}"
+      update_password: on_create
+      shell: "{{shell | default(omit)}}"
+    loop: "{{users}}"
+    loop_control:
+      loop_var: web_user
+
+  - name: copy ssh keys to webservers
+    authorized_key:
+      user: "{{key_user.username}}"
+      state: present
+      key: "{{lookup('file', '{{keys_directory}}/id_rsa{{key_user.username}}.pub')}}"
+    loop: "{{users}}"
+    loop_control:
+      loop_var: key_username
+  when: ('webservers' in group_names)
+#- name: create users on storage servers
+#- name: copy ssh keys to storage servers
 # tasks file for users

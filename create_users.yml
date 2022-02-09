@@ -1,0 +1,8 @@
+---
+- name: create users with keys
+  hosts: 'all,!managed-node-3'
+  tasks:
+
+    - name: Inlcude users role
+      include_role:
+        name: users
