@@ -1,0 +1,7 @@
+{%for host in lookup('file', '/etc/hosts').splitlines()%}
+{%if host is regex('^127.*') or host is regex('^:+.*')%}
+#{{host}}
+{%else%}
+{{host}}
+{%endif%}
+{%endfor%}
