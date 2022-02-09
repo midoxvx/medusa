@@ -1,0 +1,9 @@
+---
+- name: install apache on webservers with vhosts on a different port
+  hosts: 'all,!managed-node-3'
+  tasks:
+
+    - name: apache role
+      include_role:
+        name: apache
+      when: "'webservers' in group_names"

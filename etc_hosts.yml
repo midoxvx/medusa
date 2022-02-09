@@ -1,0 +1,11 @@
+---
+- name: populate hosts file based on control node hosts file
+  hosts: 'all,!managed-node-3'
+  gather_facts: false
+  tasks:
+
+    - name: deploy hosts template
+      template:
+        src: hosts.j2
+        dest: /etc/hosts
+        force: true

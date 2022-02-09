@@ -1,0 +1,11 @@
+[webservers]
+cloud-web-1
+cloud-web-2
+
+[storage]
+managed-node-1
+managed-node-2
+managed-node-3
+
+[proxy]
+cloud-balancer

@@ -1,0 +1,11 @@
+---
+- name: lookup
+  hosts: localhost
+  tasks:
+
+    - name: print lines
+      debug:
+        msg: "{{item}}"
+        
+      loop: "{{lookup('lines', 'cat /etc/hosts', wantlist=True)}}"
+

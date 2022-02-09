@@ -1,0 +1,9 @@
+---
+apache_package: httpd
+apache_service: httpd
+apache_vhost_directory: /webserver
+apache_config: /etc/httpd/conf/httpd.conf
+apache_vhost_config_directory: /etc/httpd/conf.d
+apache_vhost_port: 83
+apache_document_root: /var/www/html
+# vars file for apache

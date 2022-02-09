@@ -1,0 +1,6 @@
+Listen {{apache_vhost_port}}
+
+<VirtualHost *:{{apache_vhost_port}}>
+	DocumentRoot	{{apache_vhost_directory}}
+	ServerName	{{ansible_facts['fqdn']}}
+</VirtualHost>

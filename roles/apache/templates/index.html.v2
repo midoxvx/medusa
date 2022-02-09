@@ -1,0 +1,2 @@
+Hello!
+The ip of this server is: {{ansible_facts['default_ipv4']['address']}} Listening on port: {{apache_vhost_port}}

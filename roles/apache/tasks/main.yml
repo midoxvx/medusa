@@ -1,0 +1,58 @@
+---
+
+- name: Install {{apache_package}}
+  yum:
+    name: "{{apache_package}}"
+    state: latest
+
+- name: Create {{apache_vhost_directory}} #handler_selinux | restoreconf
+  file:
+    state: directory
+    path: "{{apache_vhost_directory}}"
+    owner: "{{ansible_user}}"
+    group: "{{ansible_user}}"
+  notify:
+    - h_selinux
+    - h_restorecon
+
+- name: Allow Override {{apache_config}} 
+  replace:
+    regexp: '(^\s+)?AllowOverride None'
+    replace: '\1AllowOverride All'
+    path: "{{apache_config}}"
+- name: Require all granted {{apache_config}}
+  replace:
+    regexp: '(^\s+)?Require all .*'
+    replace: '\1Require all granted'
+    path: "{{apache_config}}"
+
+- name: Deploy vhost configuration template #handler_selinux_port
+  template:
+    src: vhost.j2
+    dest: "{{apache_vhost_config_directory}}/vhost.conf"
+    owner: "{{ansible_user}}"
+    group: "{{ansible_user}}"
+    force: true
+  notify:
+    - h_seport
+
+- name: deploy index.html template in {{apache_vhost_directory}}
+  template:
+    src: index.html.v2
+    dest: "{{apache_vhost_directory}}/index.html"
+    owner: "{{ansible_user}}"
+    group: "{{ansible_user}}"
+    force: true
+- name: deploy index.html template in {{apache_document_root}}  # handler_restart
+  template:
+    src: index.html_og.j2
+    dest: "{{apache_document_root}}/index.html"
+    owner: "{{ansible_user}}"
+    group: "{{ansible_user}}"
+    force: true
+  notify:
+    - h_apache_firewall
+    - h_vhost_port
+    - h_restart_service
+
+# tasks file for apache

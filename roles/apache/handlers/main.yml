@@ -1,0 +1,36 @@
+---
+- name: h_selinux
+  sefcontext:
+    setype: httpd_sys_content_t
+    target: "{{apache_vhost_directory}}(/.*)?"
+    state: present
+- name: h_restorecon
+  shell:
+    cmd: "restorecon -Rv {{apache_vhost_directory}}"
+- name: h_seport
+  seport:
+    ports: "{{apache_vhost_port}}"
+    proto: tcp
+    setype: http_port_t
+    state: present
+
+- name: h_apache_firewall
+  firewalld:
+    service: http
+    state: enabled
+    immediate: true
+    permanent: true
+- name: h_vhost_port
+  firewalld:
+    port: "{{apache_vhost_port}}/tcp"
+    state: enabled
+    immediate: true
+    permanent: true
+
+- name: h_restart_service
+  service:
+    name: "{{apache_service}}"
+    state: restarted
+    enabled: true
+
+# handlers file for apache
